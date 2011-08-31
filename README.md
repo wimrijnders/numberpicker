@@ -15,3 +15,11 @@ an issue on the Github project page.
 * You'll notice in the res/xml/preferences.xml file in the top level element there's a namespace defined to allow easy use
 of properties to set max range and min range as well as the default value. 
 
+### Changelog
+
+2011-08-27 Xenofon Papadopoulos <xpapad@gmail.com>
+
+* Added _setWrap()_ method
+
+* Initialization will respect user-provided attributes in the layout, see the example in res/layout/main.xml
+
