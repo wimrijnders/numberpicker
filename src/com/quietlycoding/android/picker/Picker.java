@@ -39,11 +39,10 @@ public class Picker extends Activity implements NumberPickerDialog.OnNumberSetLi
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.menu_preferences_item:
+        if (item.getItemId() == R.id.menu_preferences_item) {
             startActivity(new Intent(this, PickerPreferences.class));
             return true;
-        case R.id.menu_dialog_item:
+        } else if (item.getItemId() == R.id.menu_dialog_item) {
             NumberPickerDialog dialog = new NumberPickerDialog(this, -1, 5);
             dialog.setTitle(getString(R.string.dialog_picker_title));
             dialog.setOnNumberSetListener(this);
