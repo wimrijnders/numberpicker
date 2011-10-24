@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
+<!-- 
 /*
  * Copyright 2010, 2011 Mike Novak <michael.novakjr@gmail.com>
  *
@@ -17,18 +17,21 @@
  */
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    
-    <TextView  
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
-        android:text="Hello World, NumberPicker" />
+	xmlns:np="http://schemas.android.com/apk/res/com.quietlycoding.android.picker"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
 
-    <com.quietlycoding.android.picker.NumberPicker
-        android:layout_width="fill_parent"
-	    android:layout_height="wrap_content" />
-	
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="Default NumberPicker" />
+
+	<com.quietlycoding.android.picker.NumberPicker
+		android:layout_width="fill_parent" android:layout_height="wrap_content" />
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="Start: 5, End: 10, Default: 7, Wrap: false" />
+
+	<com.quietlycoding.android.picker.NumberPicker
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		np:startRange="5" np:endRange="10" np:defaultValue="7" np:wrap="false" />
+		
 </LinearLayout>
 

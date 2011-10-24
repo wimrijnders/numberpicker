@@ -17,6 +17,7 @@
 package com.quietlycoding.android.picker;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Handler;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -37,8 +38,8 @@ import android.widget.EditText;
  * This class has been pulled from the Android platform source code, its an internal widget that hasn't been
  * made public so its included in the project in this fashion for use with the preferences screen; I have made
  * a few slight modifications to the code here, I simply put a MAX and MIN default in the code but these values
- * can still be set publically by calling code.
- *
+ * can still be set publicly by calling code.
+ *  
  * @author Google
  */
 public class NumberPicker extends LinearLayout implements OnClickListener,
@@ -46,7 +47,9 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
     private static final String TAG = "NumberPicker";
     private static final int DEFAULT_MAX = 200;
-    private static final int DEFAULT_MIN = 0;
+    private static final int DEFAULT_MIN = 0;    
+    private static final int DEFAULT_VALUE = 0;
+    private static final boolean DEFAULT_WRAP = true;
 
     public interface OnChangedListener {
         void onChanged(NumberPicker picker, int oldVal, int newVal);
@@ -98,6 +101,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     protected int mPrevious;
     private OnChangedListener mListener;
     private Formatter mFormatter;
+    private boolean mWrap;
     private long mSpeed = 300;
 
     private boolean mIncrement;
@@ -137,11 +141,16 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         if (!isEnabled()) {
             setEnabled(false);
         }
-
-        mStart = DEFAULT_MIN;
-        mEnd = DEFAULT_MAX;
+        
+    	TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.numberpicker );
+    	mStart = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
+    	mEnd = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
+    	mWrap = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
+    	mCurrent = 	a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
+    	mCurrent = Math.max( mStart, Math.min( mCurrent, mEnd ) );
+    	mText.setText( "" + mCurrent );
     }
-
+    
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -171,6 +180,15 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mCurrent = start;
         updateView();
     }
+    
+    /**
+     * Specify if numbers should wrap after the edge has been reached.
+     * 
+     * @param wrap values
+     */
+    public void setWrap( boolean wrap ) {
+    	mWrap = wrap;
+    }
 
     /**
      * Set the range of numbers allowed for the number picker. The current
@@ -193,6 +211,13 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mCurrent = current;
         updateView();
     }
+    
+    public void setCurrentAndNotify(int current) {
+        mCurrent = current;
+        notifyChange();
+        updateView();
+    }
+
 
     /**
      * The speed (in milliseconds) at which the numbers will scroll
@@ -202,14 +227,14 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mSpeed = speed;
     }
 
-    public void onClick(View v) {
+    public void onClick(View v) {    	
         validateInput(mText);
         if (!mText.hasFocus()) mText.requestFocus();
 
         // now perform the increment/decrement
-        if (R.id.increment == v.getId()) {
+        if (R.id.increment == v.getId()) {        	
             changeCurrent(mCurrent + 1);
-        } else if (R.id.decrement == v.getId()) {
+        } else if (R.id.decrement == v.getId()) {        	
             changeCurrent(mCurrent - 1);
         }
     }
@@ -220,13 +245,12 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
                 : String.valueOf(value);
     }
 
-    protected void changeCurrent(int current) {
-
-        // Wrap around the values if we go past the start or end
-        if (current > mEnd) {
-            current = mStart;
+    protected void changeCurrent(int current) {      	
+        // Wrap around the values if we go past the start or end    	
+        if (current > mEnd) {        	        	
+            current = mWrap ? mStart : mEnd;
         } else if (current < mStart) {
-            current = mEnd;
+            current = mWrap ? mEnd : mStart;
         }
         mPrevious = mCurrent;
         mCurrent = current;
@@ -300,7 +324,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
          * trigger the on focus changed and any typed values to be pulled.
          */
         mText.clearFocus();
-
+        mText.requestFocus();
         if (R.id.increment == v.getId()) {
             mIncrement = true;
             mHandler.post(mRunnable);
@@ -308,6 +332,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
             mDecrement = true;
             mHandler.post(mRunnable);
         }
+        
         return true;
     }
 
