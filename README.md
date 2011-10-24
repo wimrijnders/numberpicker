@@ -17,6 +17,11 @@ of properties to set max range and min range as well as the default value.
 
 ### Changelog
 
+2011-10-24 Paul Bourke <pauldbourke@gmail.com>
+
+* Updated library project to support the new SDK r14 tools.
+
+
 2011-08-27 Xenofon Papadopoulos <xpapad@gmail.com>
 
 * Added _setWrap()_ method
