@@ -32,6 +32,21 @@
 	<com.quietlycoding.android.picker.NumberPicker
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		np:startRange="5" np:endRange="10" np:defaultValue="7" np:wrap="false" />
-		
+
+   <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="20dip"
+        android:paddingLeft="30dip"
+        android:paddingRight="20dip"	
+	>
+		<Button
+        	android:id="@+id/decimal_button"
+        	android:layout_width="match_parent"
+        	android:layout_height="wrap_content"
+        	android:text="@string/decimal_label" 
+        />		
+	</LinearLayout>
 </LinearLayout>
 

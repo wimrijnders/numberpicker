@@ -15,20 +15,35 @@
  */
 package com.quietlycoding.android.picker;
 
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 
-public class Picker extends Activity implements NumberPickerDialog.OnNumberSetListener {
+public class Picker extends Activity implements OnClickListener, NumberPickerDialog.OnNumberSetListener {
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        View decimalButton = findViewById( R.id.decimal_button);
+        decimalButton.setOnClickListener(this);
+    }
+  
+    public void onClick(View v ) {
+		switch( v.getId() ) {
+		case R.id.decimal_button:
+			Intent i = new Intent( this, DecimalPoint.class);
+			startActivity(i);
+			break;
+		}
     }
     
     @Override

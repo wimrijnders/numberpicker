@@ -32,6 +32,7 @@
         </activity>
         
         <activity android:name="PickerPreferences" android:label="@string/app_name" />
+        <activity android:name="DecimalPoint" android:label="@string/decimal_label"></activity>
     </application>
     
 </manifest> 
