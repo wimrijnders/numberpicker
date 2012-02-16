@@ -103,6 +103,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     private Formatter mFormatter;
     private boolean mWrap;
     private long mSpeed = 300;
+    private int mDecimal;
 
     private boolean mIncrement;
     private boolean mDecrement;
@@ -143,11 +144,12 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         }
         
     	TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.numberpicker );
-    	mStart = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
-    	mEnd = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
-    	mWrap = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
-    	mCurrent = 	a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
+    	mStart   = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
+    	mEnd     = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
+    	mWrap    = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
+    	mCurrent = a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
     	mCurrent = Math.max( mStart, Math.min( mCurrent, mEnd ) );
+    	mDecimal = a.getInt( R.styleable.numberpicker_decimal, DEFAULT_VALUE );
     	mText.setText( "" + mCurrent );
     }
     
@@ -190,6 +192,30 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     	mWrap = wrap;
     }
 
+    
+    /**
+     * Specify on which position decimal point should be displayed.
+     * 
+     * If value is zero (default), no point will be displayed
+     * 
+     * @param value
+     */
+    public void setDecimal(int value) {
+    	if ( value <0 ) return;
+    	
+    	boolean update = ( mDecimal != value );
+    	mDecimal = value;
+    	
+    	if ( value == 0 ) {
+    		setFormatter( null ) ;
+    	} else {
+    		setFormatter( new DecimalFormatter( value) ) ;
+    	}
+    	
+    	if ( update ) updateView();
+    }
+    
+    
     /**
      * Set the range of numbers allowed for the number picker. The current
      * value will be automatically set to the start. Also provide a mapping
@@ -347,6 +373,9 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     private static final char[] DIGIT_CHARACTERS = new char[] {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
+    private static final char[] DIGIT_CHARACTERS_POINT = new char[] {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'
+    };
 
     private NumberPickerButton mIncrementButton;
     private NumberPickerButton mDecrementButton;
@@ -372,6 +401,39 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         }
     }
 
+    
+    private class DecimalFormatter implements Formatter {
+        final StringBuilder mBuilder = new StringBuilder();
+        final java.util.Formatter mFmt = new java.util.Formatter(mBuilder);
+        final Object[] mArgs = new Object[2];
+        
+        private int step;
+        private String format;
+    	
+    	public DecimalFormatter( int decimal_pos) {
+    		// Create a new formatting string
+    		format = "%d.%0" + decimal_pos + "d";
+    		
+        	step = 10;
+        	
+        	// Math.pow() does doubles, I want to keep it 
+        	// strictly int.
+        	for ( int i = 1; i < decimal_pos; ++ i) {
+        		step *= 10;
+        	}
+    	}
+    	
+        public String toString(int value) {
+            mArgs[0] = value/step;
+            mArgs[1] = value % step;
+            mBuilder.delete(0, mBuilder.length());
+            mFmt.format( format , mArgs);
+            
+            return mFmt.toString();
+        }
+    }
+  
+    
     private class NumberRangeKeyListener extends NumberKeyListener {
 
         // XXX This doesn't allow for range limits when controlled by a
@@ -382,7 +444,11 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         @Override
         protected char[] getAcceptedChars() {
-            return DIGIT_CHARACTERS;
+        	if ( NumberPicker.this.mDecimal > 0 ) {
+                return DIGIT_CHARACTERS_POINT;
+        	} else {
+                return DIGIT_CHARACTERS;
+        	}
         }
 
         @Override
@@ -418,7 +484,9 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
     private int getSelectedPos(String str) {
         if (mDisplayedValues == null) {
-            return Integer.parseInt(str);
+        	// Remove point, if any, from the string
+        	String tmp = str.replaceAll("[.]", "");
+            return Integer.parseInt(tmp);
         } else {
             for (int i = 0; i < mDisplayedValues.length; i++) {
 

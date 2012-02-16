@@ -7,3 +7,4 @@ proguard.cfg
 *.swp
 .classpath
 *.iws
+.project

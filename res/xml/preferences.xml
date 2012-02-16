@@ -25,7 +25,8 @@
         android:summary="Number picker as a preference"
         picker:defaultValue="15"
         picker:startRange="-50"
-        picker:endRange="50" />
+        picker:endRange="50" 
+	/>
         
 </PreferenceScreen>
 
