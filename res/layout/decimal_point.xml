@@ -18,8 +18,11 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:np="http://schemas.android.com/apk/res/com.quietlycoding.android.picker"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:gravity="center_horizontal"
+>
 
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="Default NumberPicker" />
@@ -33,7 +36,21 @@
 		np:defaultValue="80" 
 	/>
 
-
+	<Button
+        android:id="@+id/select_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_button_label" 
+		android:paddingLeft="10dip"
+	/>
+	   
+	<TextView
+	    android:id="@+id/display_selection" 
+	    android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize = "15sp"
+	/>
+	
 	<LinearLayout
 		android:orientation="horizontal" 
 		android:layout_width="fill_parent"
@@ -80,7 +97,7 @@
 			/>
 			
     	    <com.quietlycoding.android.picker.NumberPicker
-				android:id = "@+id/increment_picker"
+				android:id = "@+id/step_picker"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				np:startRange="1" 

@@ -18,7 +18,9 @@ package com.quietlycoding.android.picker;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -79,13 +81,14 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         };
 
     private final Handler mHandler;
+    
     private final Runnable mRunnable = new Runnable() {
         public void run() {
             if (mIncrement) {
-                changeCurrent(mCurrent + 1);
+                changeCurrent(mCurrent + mStep);
                 mHandler.postDelayed(this, mSpeed);
             } else if (mDecrement) {
-                changeCurrent(mCurrent - 1);
+                changeCurrent(mCurrent - mStep);
                 mHandler.postDelayed(this, mSpeed);
             }
         }
@@ -95,18 +98,26 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     private final InputFilter mNumberInputFilter;
 
     private String[] mDisplayedValues;
+    
+    private OnChangedListener mListener;
+    private Formatter mFormatter;
+
+    private boolean mIncrement;
+    private boolean mDecrement;
+    
+    //
+    // Control attributes
+    //
+    
     protected int mStart;
     protected int mEnd;
     protected int mCurrent;
     protected int mPrevious;
-    private OnChangedListener mListener;
-    private Formatter mFormatter;
     private boolean mWrap;
     private long mSpeed = 300;
     private int mDecimal;
+    private int mStep = 1;
 
-    private boolean mIncrement;
-    private boolean mDecrement;
 
     public NumberPicker(Context context) {
         this(context, null);
@@ -119,6 +130,9 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     @SuppressWarnings({"UnusedDeclaration"})
     public NumberPicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs);
+        
+        Log.d(TAG, "Numberpicker create, have id: " + getId() );
+        
         setOrientation(VERTICAL);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.number_picker, this, true);
@@ -201,7 +215,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
      * @param value
      */
     public void setDecimal(int value) {
-    	if ( value <0 ) return;
+    	if ( value < 0 ) return;
     	
     	boolean update = ( mDecimal != value );
     	mDecimal = value;
@@ -213,6 +227,14 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     	}
     	
     	if ( update ) updateView();
+    }
+    
+  
+    public void setStep( int value ) {
+    	if ( value < 1 ) return;
+    	Log.d( TAG, "step new value: " + value );
+    	
+    	mStep = value;
     }
     
     
@@ -259,9 +281,9 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         // now perform the increment/decrement
         if (R.id.increment == v.getId()) {        	
-            changeCurrent(mCurrent + 1);
+            changeCurrent(mCurrent + mStep);
         } else if (R.id.decrement == v.getId()) {        	
-            changeCurrent(mCurrent - 1);
+            changeCurrent(mCurrent - mStep);
         }
     }
 
@@ -271,6 +293,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
                 : String.valueOf(value);
     }
 
+    
     protected void changeCurrent(int current) {      	
         // Wrap around the values if we go past the start or end    	
         if (current > mEnd) {        	        	
@@ -291,6 +314,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         }
     }
 
+    
     protected void updateView() {
 
         /* If we don't have displayed values then use the
@@ -305,6 +329,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mText.setSelection(mText.getText().length());
     }
 
+    
     private void validateCurrentView(CharSequence str) {
         int val = getSelectedPos(str.toString());
         if ((val >= mStart) && (val <= mEnd)) {
@@ -451,6 +476,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         	}
         }
 
+        
         @Override
         public CharSequence filter(CharSequence source, int start, int end,
                 Spanned dest, int dstart, int dend) {
@@ -482,6 +508,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         }
     }
 
+    
     private int getSelectedPos(String str) {
         if (mDisplayedValues == null) {
         	// Remove point, if any, from the string
@@ -511,9 +538,76 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     }
 
     /**
+     * Return the currently selected value.
+     * 
+     * The decimal point, if any,  is not included in the result.
+     * 
      * @return the current value.
      */
     public int getCurrent() {
         return mCurrent;
     }
+    
+    /**
+     * Retrieve the current value as displayed on-screen.
+     * 
+     * The decimal point, if any, will be present in the result.
+     */
+    public String getString() {
+    	return formatNumber(mCurrent);
+    }
+ 
+    
+    /**
+     * Overridden to save instance state when device orientation changes.
+     * 
+     * This method is called automatically if you assign an id to the 
+     * widget using the {@link #setId(int)} method. 
+     */
+    @Override
+    protected Parcelable onSaveInstanceState() {
+    		Parcelable p = super.onSaveInstanceState();
+            Bundle bundle = new Bundle();
+            
+            Log.d(TAG, "Have id: " + getId() );
+  
+            bundle.putInt("MSTART", mStart);
+            bundle.putInt("MEND", mEnd);
+            bundle.putInt("MCURRENT", mCurrent);
+            bundle.putInt("MPREVIOUS", mPrevious);
+            bundle.putBoolean("MWRAP", mWrap);
+            bundle.putLong("MSPEED", mSpeed);
+            bundle.putInt("MDECIMAL", mDecimal);
+            bundle.putParcelable("SUPER", p);
+
+            // Other members of this class don't need to be saved.
+            return bundle;
+    }
+
+    
+    /**
+     * Overridden to restore instance state when device orientation changes. 
+     * 
+     * This method is called automatically if you assign an id to the widget
+     * widget using the {@link #setId(int)} method. 
+     */
+    @Override
+    protected void onRestoreInstanceState(Parcelable parcel) {
+    	Bundle bundle = (Bundle) parcel;
+
+    	mStart    = bundle.getInt("MSTART");
+    	mEnd      = bundle.getInt("MEND");
+    	mCurrent  = bundle.getInt("MCURRENT");
+    	mPrevious = bundle.getInt("MPREVIOUS");
+    	mWrap     = bundle.getBoolean("MWRAP");
+    	mSpeed    = bundle.getLong("MSPEED");
+    	mDecimal  = bundle.getInt("MDECIMAL");
+    	
+        Log.d(TAG, "Restored fo id: " + getId() + "; mCurrent: " + mCurrent );
+            
+    	super.onRestoreInstanceState(bundle.getParcelable("SUPER"));
+    	
+    	updateView();
+    }
+
 }
