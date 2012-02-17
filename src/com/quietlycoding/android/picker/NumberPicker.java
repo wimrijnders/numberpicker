@@ -47,6 +47,15 @@ import android.widget.EditText;
 public class NumberPicker extends LinearLayout implements OnClickListener,
         OnFocusChangeListener, OnLongClickListener {
 
+	 private static int uid = 1;
+
+	    /**
+	     * Generate uid's for the internal controls that need them
+	     */
+	private static int getNextUid() {
+		return ++uid;
+	}
+	
     private static final String TAG = "NumberPicker";
     private static final int DEFAULT_MAX = 200;
     private static final int DEFAULT_MIN = 0;    
@@ -152,6 +161,10 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mText.setOnFocusChangeListener(this);
         mText.setFilters(new InputFilter[] {inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+        Log.d(TAG, "mText id: " + mText.getId() );
+        
+       	mText.setId( getNextUid() );
+        Log.d(TAG, "mText id: " + mText.getId() );
 
         if (!isEnabled()) {
             setEnabled(false);
@@ -164,6 +177,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     	mCurrent = a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
     	mCurrent = Math.max( mStart, Math.min( mCurrent, mEnd ) );
     	mDecimal = a.getInt( R.styleable.numberpicker_decimal, DEFAULT_VALUE );
+    	
     	mText.setText( "" + mCurrent );
     }
     
@@ -408,9 +422,11 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     private class NumberPickerInputFilter implements InputFilter {
         public CharSequence filter(CharSequence source, int start, int end,
                 Spanned dest, int dstart, int dend) {
+        	
             if (mDisplayedValues == null) {
                 return mNumberInputFilter.filter(source, start, end, dest, dstart, dend);
             }
+            
             CharSequence filtered = String.valueOf(source.subSequence(start, end));
             String result = String.valueOf(dest.subSequence(0, dstart))
                     + filtered
@@ -477,6 +493,18 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         }
 
         
+        private int countDots(String str ) {
+        	int count = 0;
+        	char[] arr = str.toCharArray();
+
+        	for ( int i = 0; i < arr.length; ++i ) {
+        		if ( arr[i] == '.' ) count += 1;
+        	}
+        	
+        	return count;
+        }
+        
+        
         @Override
         public CharSequence filter(CharSequence source, int start, int end,
                 Spanned dest, int dstart, int dend) {
@@ -493,6 +521,21 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
             if ("".equals(result)) {
                 return result;
             }
+            
+            // Disallow more than one dot in the result
+            int dot_count = countDots( result );
+        	Log.d(TAG, "Result: " + result + "; Dot count: " + dot_count);
+            if ( mDecimal == 0 ) {
+            	// no dot at all
+            	if ( dot_count > 0 ) return "";
+            } else {
+            	// at most one dot
+            	if ( dot_count > 1 ) {
+                	Log.d(TAG, "Too many dots!");
+            		return "";
+            	}
+            }
+            
             int val = getSelectedPos(result);
 
             /* Ensure the user can't type in a value greater
@@ -578,6 +621,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
             bundle.putBoolean("MWRAP", mWrap);
             bundle.putLong("MSPEED", mSpeed);
             bundle.putInt("MDECIMAL", mDecimal);
+            bundle.putInt("MSTEP", mStep);
             bundle.putParcelable("SUPER", p);
 
             // Other members of this class don't need to be saved.
@@ -597,17 +641,19 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
     	mStart    = bundle.getInt("MSTART");
     	mEnd      = bundle.getInt("MEND");
-    	mCurrent  = bundle.getInt("MCURRENT");
     	mPrevious = bundle.getInt("MPREVIOUS");
     	mWrap     = bundle.getBoolean("MWRAP");
     	mSpeed    = bundle.getLong("MSPEED");
-    	mDecimal  = bundle.getInt("MDECIMAL");
+    	mStep     = bundle.getInt("MSTEP");
     	
-        Log.d(TAG, "Restored fo id: " + getId() + "; mCurrent: " + mCurrent );
-            
+    	setCurrent(bundle.getInt("MCURRENT"));
+    	setDecimal( bundle.getInt("MDECIMAL") );
+
+    	// This is the important one; update text-field.
+    	//mText.setText( "" + mCurrent );
+    	
+        Log.d(TAG, "Restored for id: " + getId() + "; mCurrent: " + mCurrent );
     	super.onRestoreInstanceState(bundle.getParcelable("SUPER"));
-    	
-    	updateView();
     }
 
 }

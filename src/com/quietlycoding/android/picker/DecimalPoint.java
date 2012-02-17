@@ -40,14 +40,12 @@ public class DecimalPoint extends Activity implements OnClickListener, OnChanged
 
         step_picker =(NumberPicker) findViewById( R.id.step_picker );
         step_picker.setOnChangeListener( this);
-        step_picker.setDecimal(1);
 }
  
     
     public void onChanged(NumberPicker picker, int oldVal, int newVal ){
     	if ( picker == decimal_picker ) {
     		this.picker.setDecimal( newVal );
-    		step_picker.setDecimal( newVal );
     	} else {
         	// Assuming step picker.
     		this.picker.setStep( newVal );   		
