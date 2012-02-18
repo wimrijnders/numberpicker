@@ -23,21 +23,16 @@
     <com.michaelnovakjr.numberpicker.NumberPickerButton android:id="@+id/increment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/timepicker_up_btn" />
+        style="@style/NumberPickerUpButton" />
 
     <EditText android:id="@+id/timepicker_input"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:singleLine="true"
-        style="?android:attr/textAppearanceLargeInverse"
-        android:textColor="@android:color/primary_text_light"
-        android:textSize="30sp"
-        android:background="@drawable/timepicker_input" />
+        style="@style/NumberPickerInputText" />
 
     <com.michaelnovakjr.numberpicker.NumberPickerButton android:id="@+id/decrement"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/timepicker_down_btn" />
+        style="@style/NumberPickerDownButton" />
 
 </merge>

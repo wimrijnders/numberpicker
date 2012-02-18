@@ -16,8 +16,15 @@
  * limitations under the License.
  */
 -->
-<resources>
-    <string name="app_name">NumberPicker Sample</string>
-    <string name="menu_preferences_label">Preferences</string>
-    <string name="menu_dialog_label">Open as dialog</string>
-</resources>
+<PreferenceScreen xmlns:picker="http://schemas.android.com/apk/res/com.michaelnovakjr.sample.numberpicker"
+                  xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.michaelnovakjr.numberpicker.NumberPickerPreference
+            android:key="demo.preference"
+            android:title="Sample Number Picker"
+            android:summary="Number picker as a preference"
+            picker:defaultValue="15"
+            picker:startRange="-50"
+            picker:endRange="50" />
+
+</PreferenceScreen>

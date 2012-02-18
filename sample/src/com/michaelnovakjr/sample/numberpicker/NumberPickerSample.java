@@ -16,10 +16,16 @@
 package com.michaelnovakjr.sample.numberpicker;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
-public class NumberPickerSample extends Activity {
+import com.michaelnovakjr.numberpicker.NumberPickerDialog;
+
+public class NumberPickerSample extends Activity implements NumberPickerDialog.OnNumberSetListener {
+    private static final String TAG = NumberPickerSample.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,5 +37,26 @@ public class NumberPickerSample extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_sample_picker, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_dialog_item) {
+            NumberPickerDialog dialog = new NumberPickerDialog(this, -1, 5);
+            dialog.setTitle(getString(R.string.dialog_picker_title));
+            dialog.setOnNumberSetListener(this);
+            dialog.show();
+
+            return true;
+        } else if (item.getItemId() == R.id.menu_preferences_item) {
+            startActivity(new Intent(this, NumberPickerPreferenceActivity.class));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void onNumberSet(int number) {
+        Log.d(TAG, "Number selected: " + number);
     }
 }
