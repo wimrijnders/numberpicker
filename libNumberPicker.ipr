@@ -193,9 +193,9 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../sample/NumberPickerSample.iml" filepath="$PROJECT_DIR$/../sample/NumberPickerSample.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libNumberPicker.iml" filepath="$PROJECT_DIR$/libNumberPicker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../tests/tests.iml" filepath="$PROJECT_DIR$/../tests/tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sample/NumberPickerSample.iml" filepath="$PROJECT_DIR$/sample/NumberPickerSample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib/libNumberPicker.iml" filepath="$PROJECT_DIR$/lib/libNumberPicker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tests/tests.iml" filepath="$PROJECT_DIR$/tests/tests.iml" />
     </modules>
   </component>
   <component name="ProjectResources">
