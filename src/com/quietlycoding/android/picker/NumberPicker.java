@@ -27,6 +27,7 @@ import android.text.Spanned;
 import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,6 +36,7 @@ import android.view.View.OnLongClickListener;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.EditText;
+import android.widget.TextView.OnEditorActionListener;
 
 /**
  * This class has been pulled from the Android platform source code, its an internal widget that hasn't been
@@ -45,7 +47,7 @@ import android.widget.EditText;
  * @author Google
  */
 public class NumberPicker extends LinearLayout implements OnClickListener,
-        OnFocusChangeListener, OnLongClickListener {
+        OnFocusChangeListener, OnLongClickListener, OnEditorActionListener {
 
 	 private static int uid = 1;
 
@@ -161,6 +163,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mText.setOnFocusChangeListener(this);
         mText.setFilters(new InputFilter[] {inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+        mText.setOnEditorActionListener( this);
+
         Log.d(TAG, "mText id: " + mText.getId() );
         
        	mText.setId( getNextUid() );
@@ -556,7 +560,13 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         if (mDisplayedValues == null) {
         	// Remove point, if any, from the string
         	String tmp = str.replaceAll("[.]", "");
-            return Integer.parseInt(tmp);
+        	try {
+        		return Integer.parseInt(tmp);
+        	} catch( NumberFormatException e) {
+        		// This apparently happens on empty strings also
+        		// return an invalid value
+        		return mEnd + 1;
+        	}
         } else {
             for (int i = 0; i < mDisplayedValues.length; i++) {
 
@@ -655,5 +665,22 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         Log.d(TAG, "Restored for id: " + getId() + "; mCurrent: " + mCurrent );
     	super.onRestoreInstanceState(bundle.getParcelable("SUPER"));
     }
+
+    /**
+     * Update the internal int value after change in the edit field.
+     * 
+     * This callback triggers when a return is pressed, but not if 
+     * you leave the keyboard without a return. Perhaps there is a better
+     * callback to use (on key input?).
+     */
+	@Override
+	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		// TODO Auto-generated method stub
+		Log.d(TAG, "onEditorAction() called.");
+		
+		CharSequence val = v.getText();
+		changeCurrent(getSelectedPos( val.toString() ));
+		return false;
+	}
 
 }
