@@ -18,12 +18,13 @@
  -->
 <resources>
     <declare-styleable name="numberpicker">
+		<attr name="idEditText" format="reference" />
         <attr name="startRange" format="integer" />
         <attr name="endRange" format="integer" />
 		<attr name="defaultValue" format="integer" />
 		<attr name="maxValue" format="integer" />
 		<attr name="wrap" format="boolean" />
 		<attr name="decimal" format="integer" />
-		</declare-styleable>
+	</declare-styleable>
 </resources>
 

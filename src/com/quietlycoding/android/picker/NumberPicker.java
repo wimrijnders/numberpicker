@@ -49,14 +49,14 @@ import android.widget.TextView.OnEditorActionListener;
 public class NumberPicker extends LinearLayout implements OnClickListener,
         OnFocusChangeListener, OnLongClickListener, OnEditorActionListener {
 
-	 private static int uid = 1;
+	// private static int uid = 1;
 
 	    /**
 	     * Generate uid's for the internal controls that need them
 	     */
-	private static int getNextUid() {
-		return ++uid;
-	}
+//	private static int getNextUid() {
+//		return ++uid;
+//	}
 	
     private static final String TAG = "NumberPicker";
     private static final int DEFAULT_MAX = 200;
@@ -138,15 +138,26 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         this(context, attrs, 0);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
     public NumberPicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs);
         
         Log.d(TAG, "Numberpicker create, have id: " + getId() );
         
+    	TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.numberpicker );
+    	int new_id  = a.getResourceId( R.styleable.numberpicker_idEditText, DEFAULT_VALUE );        
+    	mStart   = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
+    	mEnd     = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
+    	mWrap    = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
+    	mCurrent = a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
+    	mCurrent = Math.max( mStart, Math.min( mCurrent, mEnd ) );
+    	mDecimal = a.getInt( R.styleable.numberpicker_decimal, DEFAULT_VALUE );
+    	a.recycle();
+        
+        
         setOrientation(VERTICAL);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.number_picker, this, true);
+        
         mHandler = new Handler();
         InputFilter inputFilter = new NumberPickerInputFilter();
         mNumberInputFilter = new NumberRangeKeyListener();
@@ -159,28 +170,31 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mDecrementButton.setOnLongClickListener(this);
         mDecrementButton.setNumberPicker(this);
 
-        mText = (EditText) findViewById(R.id.timepicker_input);
+        if ( getId() != -1 ) {
+        	View temp =  findViewById(getId());        
+        	mText = (EditText) temp.findViewById(R.id.numberpicker_input);
+        	
+            Log.d(TAG, "mText prev id: " + mText.getId() );
+        	//mText.setId( new_id );
+//       	mText.setId( getNextUid() );
+        } else {
+        	mText = (EditText) findViewById(R.id.numberpicker_input);
+        }
+        
+        Log.d(TAG, "mText id: " + mText.getId() );
+
+        
         mText.setOnFocusChangeListener(this);
         mText.setFilters(new InputFilter[] {inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         mText.setOnEditorActionListener( this);
 
-        Log.d(TAG, "mText id: " + mText.getId() );
-        
-       	mText.setId( getNextUid() );
-        Log.d(TAG, "mText id: " + mText.getId() );
+  
 
         if (!isEnabled()) {
             setEnabled(false);
         }
         
-    	TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.numberpicker );
-    	mStart   = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
-    	mEnd     = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
-    	mWrap    = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
-    	mCurrent = a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
-    	mCurrent = Math.max( mStart, Math.min( mCurrent, mEnd ) );
-    	mDecimal = a.getInt( R.styleable.numberpicker_decimal, DEFAULT_VALUE );
     	
     	mText.setText( "" + mCurrent );
     }
