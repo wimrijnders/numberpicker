@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnLongClickListener;
@@ -48,15 +49,6 @@ import android.widget.TextView.OnEditorActionListener;
  */
 public class NumberPicker extends LinearLayout implements OnClickListener,
         OnFocusChangeListener, OnLongClickListener, OnEditorActionListener {
-
-	// private static int uid = 1;
-
-	    /**
-	     * Generate uid's for the internal controls that need them
-	     */
-//	private static int getNextUid() {
-//		return ++uid;
-//	}
 	
     private static final String TAG = "NumberPicker";
     private static final int DEFAULT_MAX = 200;
@@ -64,6 +56,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     private static final int DEFAULT_VALUE = 0;
     private static final boolean DEFAULT_WRAP = true;
 
+    
     public interface OnChangedListener {
         void onChanged(NumberPicker picker, int oldVal, int newVal);
     }
@@ -138,6 +131,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         this(context, attrs, 0);
     }
 
+    
     public NumberPicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs);
         
@@ -170,16 +164,28 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mDecrementButton.setOnLongClickListener(this);
         mDecrementButton.setNumberPicker(this);
 
+        /*
         if ( getId() != -1 ) {
-        	View temp =  findViewById(getId());        
+        	View temp =  findViewById(getId());       
+        	
+        	ViewParent tmp = temp.getParent();
+        	Log.d(TAG, "Parent this: " + tmp  );
+        	if ( tmp != null ) 	Log.d(TAG, "Parent this: " + tmp.toString() );
+        	
         	mText = (EditText) temp.findViewById(R.id.numberpicker_input);
         	
+        	tmp = mText.getParent();
+        	Log.d(TAG, "Parent mText: " + tmp  );
+        	if ( tmp != null ) 	Log.d(TAG, "Parent mText: " + tmp.toString() );
+        	
             Log.d(TAG, "mText prev id: " + mText.getId() );
-        	//mText.setId( new_id );
-//       	mText.setId( getNextUid() );
+        	mText.setId( new_id );
+            //mText.setId( getNextUid() );
         } else {
+        */
         	mText = (EditText) findViewById(R.id.numberpicker_input);
-        }
+        	mText.setId( new_id );
+//        }
         
         Log.d(TAG, "mText id: " + mText.getId() );
 
@@ -188,13 +194,11 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mText.setFilters(new InputFilter[] {inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         mText.setOnEditorActionListener( this);
-
   
 
         if (!isEnabled()) {
             setEnabled(false);
         }
-        
     	
     	mText.setText( "" + mCurrent );
     }
@@ -631,6 +635,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
      * This method is called automatically if you assign an id to the 
      * widget using the {@link #setId(int)} method. 
      */
+    /*
     @Override
     protected Parcelable onSaveInstanceState() {
     		Parcelable p = super.onSaveInstanceState();
@@ -651,6 +656,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
             // Other members of this class don't need to be saved.
             return bundle;
     }
+    */
 
     
     /**
@@ -659,6 +665,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
      * This method is called automatically if you assign an id to the widget
      * widget using the {@link #setId(int)} method. 
      */
+/*    
     @Override
     protected void onRestoreInstanceState(Parcelable parcel) {
     	Bundle bundle = (Bundle) parcel;
@@ -679,6 +686,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         Log.d(TAG, "Restored for id: " + getId() + "; mCurrent: " + mCurrent );
     	super.onRestoreInstanceState(bundle.getParcelable("SUPER"));
     }
+    */
 
     /**
      * Update the internal int value after change in the edit field.
