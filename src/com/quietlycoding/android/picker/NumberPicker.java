@@ -18,9 +18,7 @@ package com.quietlycoding.android.picker;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -30,7 +28,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnLongClickListener;
@@ -164,44 +161,22 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mDecrementButton.setOnLongClickListener(this);
         mDecrementButton.setNumberPicker(this);
 
-        /*
-        if ( getId() != -1 ) {
-        	View temp =  findViewById(getId());       
-        	
-        	ViewParent tmp = temp.getParent();
-        	Log.d(TAG, "Parent this: " + tmp  );
-        	if ( tmp != null ) 	Log.d(TAG, "Parent this: " + tmp.toString() );
-        	
-        	mText = (EditText) temp.findViewById(R.id.numberpicker_input);
-        	
-        	tmp = mText.getParent();
-        	Log.d(TAG, "Parent mText: " + tmp  );
-        	if ( tmp != null ) 	Log.d(TAG, "Parent mText: " + tmp.toString() );
-        	
-            Log.d(TAG, "mText prev id: " + mText.getId() );
-        	mText.setId( new_id );
-            //mText.setId( getNextUid() );
-        } else {
-        */
-        	mText = (EditText) findViewById(R.id.numberpicker_input);
-        	mText.setId( new_id );
-//        }
-        
+       	mText = (EditText) findViewById(R.id.numberpicker_input);
+        mText.setId( new_id );
         Log.d(TAG, "mText id: " + mText.getId() );
-
         
         mText.setOnFocusChangeListener(this);
         mText.setFilters(new InputFilter[] {inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         mText.setOnEditorActionListener( this);
   
-
         if (!isEnabled()) {
             setEnabled(false);
         }
     	
     	mText.setText( "" + mCurrent );
     }
+
     
     @Override
     public void setEnabled(boolean enabled) {
@@ -619,6 +594,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         return mCurrent;
     }
     
+    
     /**
      * Retrieve the current value as displayed on-screen.
      * 
@@ -628,66 +604,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     	return formatNumber(mCurrent);
     }
  
-    
-    /**
-     * Overridden to save instance state when device orientation changes.
-     * 
-     * This method is called automatically if you assign an id to the 
-     * widget using the {@link #setId(int)} method. 
-     */
-    /*
-    @Override
-    protected Parcelable onSaveInstanceState() {
-    		Parcelable p = super.onSaveInstanceState();
-            Bundle bundle = new Bundle();
-            
-            Log.d(TAG, "Have id: " + getId() );
-  
-            bundle.putInt("MSTART", mStart);
-            bundle.putInt("MEND", mEnd);
-            bundle.putInt("MCURRENT", mCurrent);
-            bundle.putInt("MPREVIOUS", mPrevious);
-            bundle.putBoolean("MWRAP", mWrap);
-            bundle.putLong("MSPEED", mSpeed);
-            bundle.putInt("MDECIMAL", mDecimal);
-            bundle.putInt("MSTEP", mStep);
-            bundle.putParcelable("SUPER", p);
-
-            // Other members of this class don't need to be saved.
-            return bundle;
-    }
-    */
-
-    
-    /**
-     * Overridden to restore instance state when device orientation changes. 
-     * 
-     * This method is called automatically if you assign an id to the widget
-     * widget using the {@link #setId(int)} method. 
-     */
-/*    
-    @Override
-    protected void onRestoreInstanceState(Parcelable parcel) {
-    	Bundle bundle = (Bundle) parcel;
-
-    	mStart    = bundle.getInt("MSTART");
-    	mEnd      = bundle.getInt("MEND");
-    	mPrevious = bundle.getInt("MPREVIOUS");
-    	mWrap     = bundle.getBoolean("MWRAP");
-    	mSpeed    = bundle.getLong("MSPEED");
-    	mStep     = bundle.getInt("MSTEP");
-    	
-    	setCurrent(bundle.getInt("MCURRENT"));
-    	setDecimal( bundle.getInt("MDECIMAL") );
-
-    	// This is the important one; update text-field.
-    	//mText.setText( "" + mCurrent );
-    	
-        Log.d(TAG, "Restored for id: " + getId() + "; mCurrent: " + mCurrent );
-    	super.onRestoreInstanceState(bundle.getParcelable("SUPER"));
-    }
-    */
-
+        
     /**
      * Update the internal int value after change in the edit field.
      * 

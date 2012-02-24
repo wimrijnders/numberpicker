@@ -3,11 +3,9 @@ package com.quietlycoding.android.picker;
 import com.quietlycoding.android.picker.NumberPicker.OnChangedListener;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
@@ -33,12 +31,6 @@ public class DecimalPoint extends Activity implements OnClickListener, OnChanged
         picker =(NumberPicker) findViewById( R.id.number_picker );
         picker.setDecimal(1);
 
-    	ViewParent tmp = picker.getParent();
-    	Log.d(TAG, "Parent picker: " + tmp  );
-    	if ( tmp != null ) 	Log.d(TAG, "Parent picker: " + tmp.toString() );
-    	
-
-    	
         Button button =(Button) findViewById( R.id.select_button );
         button.setOnClickListener(this);
         
