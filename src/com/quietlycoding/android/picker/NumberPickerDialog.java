@@ -16,6 +16,8 @@
 package com.quietlycoding.android.picker;
 
 import android.app.AlertDialog;
+import com.quietlycoding.android.numberpicker.*;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;

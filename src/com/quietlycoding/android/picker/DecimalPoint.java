@@ -1,7 +1,5 @@
 package com.quietlycoding.android.picker;
 
-import com.quietlycoding.android.picker.NumberPicker.OnChangedListener;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +7,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import com.quietlycoding.android.numberpicker.NumberPicker.OnChangedListener;
+import com.quietlycoding.android.numberpicker.*;
 
 
 

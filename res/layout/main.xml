@@ -24,12 +24,12 @@
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="Default NumberPicker" />
 
-	<com.quietlycoding.android.picker.NumberPicker
+	<com.quietlycoding.android.numberpicker.NumberPicker
 		android:layout_width="fill_parent" android:layout_height="wrap_content" />
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="Start: 5, End: 10, Default: 7, Wrap: false" />
 
-	<com.quietlycoding.android.picker.NumberPicker
+	<com.quietlycoding.android.numberpicker.NumberPicker
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		np:startRange="5" np:endRange="10" np:defaultValue="7" np:wrap="false" />
 
