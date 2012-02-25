@@ -31,7 +31,6 @@
 	    android:id = "@+id/number_picker"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
-		np:idEditText="@+id/firstEdit" 
 		np:startRange="0" 
 		np:endRange="1000" 
 		np:defaultValue="80"
@@ -77,10 +76,9 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 			    android:layout_weight="1"
-				np:idEditText="@+id/secondEdit" 
 				np:startRange="0" 
 				np:endRange="6" 
-				np:defaultValue="2" 
+				np:defaultValue="1" 
 				np:wrap="false" 
 			/>
 		</LinearLayout>
@@ -106,7 +104,6 @@
 				np:endRange="20" 
 				np:defaultValue="1" 
 				np:wrap="false" 
-				np:idEditText="@+id/thirdEdit" 
 			/>
 		</LinearLayout>
 	</LinearLayout>

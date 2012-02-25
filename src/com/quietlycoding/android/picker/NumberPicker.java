@@ -144,7 +144,6 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         Log.d(TAG, "Numberpicker create, have id: " + getId() );
         
     	TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.numberpicker );
-    	int new_id  = a.getResourceId( R.styleable.numberpicker_idEditText, DEFAULT_VALUE );        
     	mStart   = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
     	mEnd     = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
     	mWrap    = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
@@ -669,7 +668,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     	// set the editText field.
     	setCurrent(bundle.getInt("MCURRENT"));
     	setDecimal( bundle.getInt("MDECIMAL") );
-
+    	
         Log.d(TAG, "Restored for id: " + getId() + "; mCurrent: " + mCurrent );
     	super.onRestoreInstanceState(bundle.getParcelable("SUPER"));
     }

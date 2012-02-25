@@ -18,7 +18,6 @@
  -->
 <resources>
     <declare-styleable name="numberpicker">
-		<attr name="idEditText" format="reference" />
         <attr name="startRange" format="integer" />
         <attr name="endRange" format="integer" />
 		<attr name="defaultValue" format="integer" />
