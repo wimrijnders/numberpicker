@@ -18,9 +18,7 @@ package com.quietlycoding.android.picker;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -150,7 +148,6 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         setOrientation(VERTICAL);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.number_picker, this, true);
-        Log.d(TAG,"Done inflating");
         
         mHandler = new Handler();
         InputFilter inputFilter = new NumberPickerInputFilter();
@@ -165,7 +162,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mDecrementButton.setNumberPicker(this);
 
        	mText = (EditText) findViewById(R.id.numberpicker_input);
-       //mText.setId( new_id );
+        mText.setId( new_id );
         Log.d(TAG, "mText id: " + mText.getId() );
         
         mText.setOnFocusChangeListener(this);
@@ -617,42 +614,12 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
      */
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		// TODO Auto-generated method stub
 		Log.d(TAG, "onEditorAction() called.");
 		
 		CharSequence val = v.getText();
 		changeCurrent(getSelectedPos( val.toString() ));
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see android.view.View#onRestoreInstanceState(android.os.Parcelable)
-	 */
-	@Override
-	protected void onRestoreInstanceState(Parcelable state) {
-		Bundle bundle = (Bundle) state;
-		super.onRestoreInstanceState(bundle.getParcelable("VIEW_STATE"));
-		
-		String val = bundle.getString("EDIT_TEXT" );
-		Log.d(TAG, "restoring value: " + val );
-		
-		mText.setText( val );
-
-	}
-
-	/* (non-Javadoc)
-	 * @see android.view.View#onSaveInstanceState()
-	 */
-	@Override
-	protected Parcelable onSaveInstanceState() {
-		Parcelable p = super.onSaveInstanceState();
-		Bundle bundle = new Bundle();
-
-		String val = mText.getText().toString();
-		Log.d(TAG, "saving value: " + val );
-		bundle.putString("EDIT_TEXT", val );
-		bundle.putParcelable("VIEW_STATE", p);
-		
-		return bundle;
 	}
 
 }
