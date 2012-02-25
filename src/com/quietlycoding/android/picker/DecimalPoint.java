@@ -31,6 +31,7 @@ public class DecimalPoint extends Activity implements OnClickListener, OnChanged
         picker =(NumberPicker) findViewById( R.id.number_picker );
         picker.setDecimal(1);
 
+
         Button button =(Button) findViewById( R.id.select_button );
         button.setOnClickListener(this);
         

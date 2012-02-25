@@ -18,7 +18,9 @@ package com.quietlycoding.android.picker;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -46,6 +48,15 @@ import android.widget.TextView.OnEditorActionListener;
  */
 public class NumberPicker extends LinearLayout implements OnClickListener,
         OnFocusChangeListener, OnLongClickListener, OnEditorActionListener {
+
+	// private static int uid = 1;
+
+	    /**
+	     * Generate uid's for the internal controls that need them
+	     */
+//	private static int getNextUid() {
+//		return ++uid;
+//	}
 	
     private static final String TAG = "NumberPicker";
     private static final int DEFAULT_MAX = 200;
@@ -53,7 +64,6 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     private static final int DEFAULT_VALUE = 0;
     private static final boolean DEFAULT_WRAP = true;
 
-    
     public interface OnChangedListener {
         void onChanged(NumberPicker picker, int oldVal, int newVal);
     }
@@ -128,7 +138,6 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         this(context, attrs, 0);
     }
 
-    
     public NumberPicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs);
         
@@ -162,17 +171,23 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mDecrementButton.setNumberPicker(this);
 
        	mText = (EditText) findViewById(R.id.numberpicker_input);
-        mText.setId( new_id );
+       	
+       	// Set the id to 'nothing', so that the framework
+       	// doesn't try to restore/save it.
+        mText.setId( NO_ID );
+        
         Log.d(TAG, "mText id: " + mText.getId() );
         
         mText.setOnFocusChangeListener(this);
         mText.setFilters(new InputFilter[] {inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         mText.setOnEditorActionListener( this);
+
   
         if (!isEnabled()) {
             setEnabled(false);
         }
+        
     	
     	mText.setText( "" + mCurrent );
     }
@@ -604,7 +619,61 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     	return formatNumber(mCurrent);
     }
  
-        
+    
+    /**
+     * Overridden to save instance state when device orientation changes.
+     * 
+     * This method is called automatically if you assign an id to the 
+     * widget using the {@link #setId(int)} method. 
+     */
+    @Override
+    protected Parcelable onSaveInstanceState() {
+    		Parcelable p = super.onSaveInstanceState();
+            Bundle bundle = new Bundle();
+            
+            Log.d(TAG, "Have id: " + getId() );
+  
+            bundle.putInt("MSTART", mStart);
+            bundle.putInt("MEND", mEnd);
+            bundle.putInt("MCURRENT", mCurrent);
+            bundle.putInt("MPREVIOUS", mPrevious);
+            bundle.putBoolean("MWRAP", mWrap);
+            bundle.putLong("MSPEED", mSpeed);
+            bundle.putInt("MDECIMAL", mDecimal);
+            bundle.putInt("MSTEP", mStep);
+            bundle.putParcelable("SUPER", p);
+
+            // Other members of this class don't need to be saved.
+            return bundle;
+    }
+
+    
+    /**
+     * Overridden to restore instance state when device orientation changes. 
+     * 
+     * This method is called automatically if you assign an id to the widget
+     * widget using the {@link #setId(int)} method. 
+     */
+    @Override
+    protected void onRestoreInstanceState(Parcelable parcel) {
+    	Bundle bundle = (Bundle) parcel;
+
+    	mStart    = bundle.getInt("MSTART");
+    	mEnd      = bundle.getInt("MEND");
+    	mPrevious = bundle.getInt("MPREVIOUS");
+    	mWrap     = bundle.getBoolean("MWRAP");
+    	mSpeed    = bundle.getLong("MSPEED");
+    	mStep     = bundle.getInt("MSTEP");
+    	
+    	// setCurrent() will call updateView(), which will properly 
+    	// set the editText field.
+    	setCurrent(bundle.getInt("MCURRENT"));
+    	setDecimal( bundle.getInt("MDECIMAL") );
+
+        Log.d(TAG, "Restored for id: " + getId() + "; mCurrent: " + mCurrent );
+    	super.onRestoreInstanceState(bundle.getParcelable("SUPER"));
+    }
+
     /**
      * Update the internal int value after change in the edit field.
      * 
@@ -614,7 +683,6 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
      */
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-		// TODO Auto-generated method stub
 		Log.d(TAG, "onEditorAction() called.");
 		
 		CharSequence val = v.getText();
