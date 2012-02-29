@@ -25,6 +25,7 @@ import android.text.Spanned;
 import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +34,7 @@ import android.view.View.OnLongClickListener;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.EditText;
+import android.widget.TextView.OnEditorActionListener;
 
 /**
  * This class has been pulled from the Android platform source code, its an internal widget that hasn't been
@@ -43,7 +45,7 @@ import android.widget.EditText;
  * @author Google
  */
 public class NumberPicker extends LinearLayout implements OnClickListener,
-        OnFocusChangeListener, OnLongClickListener {
+        OnEditorActionListener, OnFocusChangeListener, OnLongClickListener {
 
     private static final String TAG = "NumberPicker";
     private static final int DEFAULT_MAX = 200;
@@ -135,6 +137,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         mText = (EditText) findViewById(R.id.timepicker_input);
         mText.setOnFocusChangeListener(this);
+        mText.setOnEditorActionListener(this);
         mText.setFilters(new InputFilter[] {inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
 
@@ -301,6 +304,15 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         if (!hasFocus) {
             validateInput(v);
         }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (v == mText) {
+            validateInput(v);
+            // Don't return true, let Android handle the soft keyboard
+        }
+        return false;
     }
 
     private void validateInput(View v) {
