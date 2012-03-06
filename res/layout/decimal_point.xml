@@ -78,7 +78,7 @@
 			    android:layout_weight="1"
 				np:startRange="0" 
 				np:endRange="6" 
-				np:defaultValue="3" 
+				np:defaultValue="1" 
 				np:wrap="false" 
 			/>
 		</LinearLayout>
