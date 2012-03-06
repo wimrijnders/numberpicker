@@ -1,26 +1,28 @@
-Number Picker Sample
--------
+## NumberPicker for Android
 
-This project contains a working example of a number picker widget for use in Android applications. In addition
-to the basic widget included in this project is a sample preference dialog that contains the number picker widget. All
-source code is licensed under the Apache 2.0 License. If you come across issues with the provided code you can file
-an issue on the Github project page.
+This project is an Android library project for a NumberPicker widget. This library has been tested on Android 2.1 through Android 4.0. The repository contains three parts
+described below. All source code is licensed under the Apache 2.0 License.
 
-### Few notes on resources
+### Project overview
 
-* The number picker preference uses a few attributes defined in the res/values/attrs.xml file.
+* lib - This is the library project that can be included in an Android project. This contains all the necessary resources and code for the functioning widget.
+* sample - This is an Android sample app that demonstrates the use of the NumberPicker widget in a layout, as part of a dialog or as a preference item.
+* tests - A set of unit tests for the library project. 
 
-* In the number picker preference Java class it references the namespace defined in the attrs.xml file.
+### Submitting patches
 
-* You'll notice in the res/xml/preferences.xml file in the top level element there's a namespace defined to allow easy use
-of properties to set max range and min range as well as the default value. 
+Patches for the project are welcome from anyone. The recommended practice for submitting a change is to fork the project, make your changes and submit a pull request to merge in
+your changes. It is recommended that you write tests for the functionality or bug you are fixing with your patch. 
 
 ### Changelog
+
+2012-03-06 Luca Santarelli @hrkdroid
+
+* Bug fix: Store the value of the TextView on keyboard input.
 
 2011-10-24 Paul Bourke <pauldbourke@gmail.com>
 
 * Updated library project to support the new SDK r14 tools.
-
 
 2011-08-27 Xenofon Papadopoulos <xpapad@gmail.com>
 
