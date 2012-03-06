@@ -26,7 +26,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import com.michaelnovakjr.numberpicker.NumberPickerDialog;
 
-public class NumberPickerSample extends Activity implements NumberPickerDialog.OnNumberSetListener {
+public class NumberPickerSample extends Activity implements NumberPickerDialog.OnNumberSetListener, OnClickListener {
     private static final String TAG = NumberPickerSample.class.getSimpleName();
 
     @Override
@@ -41,8 +41,9 @@ public class NumberPickerSample extends Activity implements NumberPickerDialog.O
     public void onClick(View v ) {
 		switch( v.getId() ) {
 		case R.id.decimal_button:
-			Intent i = new Intent( this, DecimalPoint.class);
-			startActivity(i);
+			//WRI TODO
+			//Intent i = new Intent( this, DecimalPoint.class);
+			//startActivity(i);
 			break;
 		}
     }

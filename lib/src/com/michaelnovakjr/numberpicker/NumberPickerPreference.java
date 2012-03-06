@@ -7,7 +7,6 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import com.quietlycoding.android.numberpicker.*;
 
 
 public class NumberPickerPreference extends DialogPreference {

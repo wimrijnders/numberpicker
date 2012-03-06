@@ -16,7 +16,6 @@
 package com.michaelnovakjr.numberpicker;
 
 import android.app.AlertDialog;
-import com.quietlycoding.android.numberpicker.*;
 
 import android.content.Context;
 import android.content.DialogInterface;

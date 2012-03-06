@@ -20,4 +20,5 @@
     <string name="app_name">NumberPicker Sample</string>
     <string name="menu_preferences_label">Preferences</string>
     <string name="menu_dialog_label">Open as dialog</string>
+	<string name="decimal_label">Decimal Point Demo</string>    
 </resources>
