@@ -16,6 +16,10 @@ your changes. It is recommended that you write tests for the functionality or bu
 
 ### Changelog
 
+2012-03-06 Luca Santarelli @hrkdroid
+
+* Bug fix: Store the value of the TextView on keyboard input.
+
 2011-10-24 Paul Bourke <pauldbourke@gmail.com>
 
 * Updated library project to support the new SDK r14 tools.
