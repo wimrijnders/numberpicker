@@ -16,9 +16,12 @@
  */
 package com.michaelnovakjr.numberpicker;
 
+
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -84,10 +87,10 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     private final Runnable mRunnable = new Runnable() {
         public void run() {
             if (mIncrement) {
-                changeCurrent(mCurrent + 1);
+                changeCurrent(mCurrent + mStep);
                 mHandler.postDelayed(this, mSpeed);
             } else if (mDecrement) {
-                changeCurrent(mCurrent - 1);
+                changeCurrent(mCurrent - mStep);
                 mHandler.postDelayed(this, mSpeed);
             }
         }
@@ -105,6 +108,8 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     protected Formatter mFormatter;
     protected boolean mWrap;
     protected long mSpeed = 300;
+    private int mDecimal;
+    private int mStep = 1;
 
     private boolean mIncrement;
     private boolean mDecrement;
@@ -120,6 +125,18 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     @SuppressWarnings({"UnusedDeclaration"})
     public NumberPicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs);
+        
+        TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.numberpicker );
+        mStart = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
+        mEnd = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
+        mWrap = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
+        mCurrent = 	a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
+        mCurrent = Math.max( mStart, Math.min( mCurrent, mEnd ) );
+    	int tmpDecimal =  a.getInt( R.styleable.numberpicker_decimal, DEFAULT_VALUE );
+    	mStep    =  a.getInt( R.styleable.numberpicker_step, 1 );
+    	a.recycle();
+
+        
         setOrientation(VERTICAL);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.number_picker, this, true);
@@ -136,22 +153,27 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mDecrementButton.setNumberPicker(this);
 
         mText = (EditText) findViewById(R.id.timepicker_input);
+        
+      	// Set the id to 'nothing', so that the framework
+       	// doesn't try to restore/save it.
+        mText.setId( NO_ID );
+        
+        Log.d(TAG, "mText id: " + mText.getId() );
+        
         mText.setOnFocusChangeListener(this);
         mText.setOnEditorActionListener(this);
         mText.setFilters(new InputFilter[] {inputFilter});
         mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
 
+        // Following needs to be called after text control has been created.
+        setDecimal(tmpDecimal);
+        
         if (!isEnabled()) {
             setEnabled(false);
         }
+        
+        //mText.setText( "" + mCurrent );
 
-        TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.numberpicker );
-        mStart = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
-        mEnd = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
-        mWrap = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
-        mCurrent = 	a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
-        mCurrent = Math.max( mStart, Math.min( mCurrent, mEnd ) );
-        mText.setText( "" + mCurrent );
     }
 
     @Override
@@ -238,9 +260,9 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         // now perform the increment/decrement
         if (R.id.increment == v.getId()) {
-            changeCurrent(mCurrent + 1);
+            changeCurrent(mCurrent + mStep);
         } else if (R.id.decrement == v.getId()) {
-            changeCurrent(mCurrent - 1);
+            changeCurrent(mCurrent - mStep);
         }
     }
 
@@ -306,15 +328,29 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         }
     }
 
+    
+    /**
+     * This callback triggers when a return is pressed, but not if 
+     * you leave the keyboard without a return. Perhaps there is a better
+     * callback to use (on key input?).
+     */
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (v == mText) {
+    		Log.d(TAG, "onEditorAction() called.");
+    		
             validateInput(v);
+            
+            // Update the internal int value after change in the edit field.
+    		CharSequence val = v.getText();
+    		changeCurrent(getSelectedPos( val.toString() ));
+            
             // Don't return true, let Android handle the soft keyboard
         }
         return false;
     }
 
+    
     private void validateInput(View v) {
         String str = String.valueOf(((TextView) v).getText());
         if ("".equals(str)) {
@@ -361,6 +397,11 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     private static final char[] DIGIT_CHARACTERS = new char[] {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
+    
+    private static final char[] DIGIT_CHARACTERS_POINT = new char[] {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'
+    };
+
 
     private NumberPickerButton mIncrementButton;
     private NumberPickerButton mDecrementButton;
@@ -396,7 +437,22 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         @Override
         protected char[] getAcceptedChars() {
-            return DIGIT_CHARACTERS;
+        	if ( NumberPicker.this.mDecimal > 0 ) {
+                return DIGIT_CHARACTERS_POINT;
+        	} else {
+                return DIGIT_CHARACTERS;
+        	}
+       }
+
+        private int countDots(String str ) {
+        	int count = 0;
+        	char[] arr = str.toCharArray();
+
+        	for ( int i = 0; i < arr.length; ++i ) {
+        		if ( arr[i] == '.' ) count += 1;
+        	}
+        	
+        	return count;
         }
 
         @Override
@@ -415,6 +471,21 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
             if ("".equals(result)) {
                 return result;
             }
+                        
+            // Disallow more than one dot in the result
+            int dot_count = countDots( result );
+        	Log.d(TAG, "Result: " + result + "; Dot count: " + dot_count);
+            if ( mDecimal == 0 ) {
+            	// no dot at all
+            	if ( dot_count > 0 ) return "";
+            } else {
+            	// at most one dot
+            	if ( dot_count > 1 ) {
+                	Log.d(TAG, "Too many dots!");
+            		return "";
+            	}
+            }
+            
             int val = getSelectedPos(result);
 
             /* Ensure the user can't type in a value greater
@@ -432,7 +503,15 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
     private int getSelectedPos(String str) {
         if (mDisplayedValues == null) {
-            return Integer.parseInt(str);
+        	// Remove point, if any, from the string
+        	String tmp = str.replaceAll("[.]", "");
+        	try {
+        		return Integer.parseInt(tmp);
+        	} catch( NumberFormatException e) {
+        		// This apparently happens on empty strings also
+        		// return an invalid value
+        		return mEnd + 1;
+        	}
         } else {
             for (int i = 0; i < mDisplayedValues.length; i++) {
 
@@ -462,4 +541,146 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     public int getCurrent() {
         return mCurrent;
     }
+    
+    
+    ////////////////////////////////////////
+    // Decimal point and step support
+    ////////////////////////////////////////
+
+    private class DecimalFormatter implements Formatter {
+        final StringBuilder mBuilder = new StringBuilder();
+        final java.util.Formatter mFmt = new java.util.Formatter(mBuilder);
+        final Object[] mArgs = new Object[2];
+        
+        private int step;
+        private String format;
+    	
+    	public DecimalFormatter( int decimal_pos) {
+    		// Create a new formatting string
+    		format = "%d.%0" + decimal_pos + "d";
+    		
+        	step = 10;
+        	
+        	// Math.pow() does doubles, I want to keep it 
+        	// strictly int.
+        	for ( int i = 1; i < decimal_pos; ++ i) {
+        		step *= 10;
+        	}
+    	}
+    	
+        public String toString(int value) {
+            mArgs[0] = value/step;
+            mArgs[1] = value % step;
+            mBuilder.delete(0, mBuilder.length());
+            mFmt.format( format , mArgs);
+            
+            return mFmt.toString();
+        }
+    }
+
+    
+    /**
+     * Specify on which position decimal point should be displayed.
+     * 
+     * If value is zero (default), no point will be displayed
+     * 
+     * @param value
+     */
+    public void setDecimal(int value) {
+    	if ( value < 0 ) return;
+    	
+    	mDecimal = value;
+    	
+    	if ( value == 0 ) {
+    		setFormatter( null ) ;
+    	} else {
+    		setFormatter( new DecimalFormatter( value) ) ;
+    	}
+    	
+    	updateView();
+    }    
+
+    
+    public void setStep( int value ) {
+    	if ( value < 1 ) return;
+    	Log.d( TAG, "step new value: " + value );
+    	
+    	mStep = value;
+    }
+
+    
+    /**
+     * Retrieve the current value as displayed on-screen.
+     * 
+     * The decimal point, if any, will be present in the result.
+     */
+    public String getString() {
+    	return formatNumber(mCurrent);
+    }
+
+    
+    public double getDouble() {
+    	String val = getString();
+    	try {
+    		return Double.parseDouble( val );
+    	} catch( NumberFormatException e ) {
+    		Log.d(TAG, "Error converting '" + val + "' return zero from getDouble().");
+    		return 0.0;
+    	}
+    }
+    
+    /**
+     * Overridden to save instance state when device orientation changes.
+     * 
+     * This method is called automatically if you assign an id to the 
+     * widget using the {@link #setId(int)} method. 
+     */
+    @Override
+    protected Parcelable onSaveInstanceState() {
+    		Parcelable p = super.onSaveInstanceState();
+            Bundle bundle = new Bundle();
+            
+            Log.d(TAG, "Have id: " + getId() );
+  
+            bundle.putInt("MSTART", mStart);
+            bundle.putInt("MEND", mEnd);
+            bundle.putInt("MCURRENT", mCurrent);
+            bundle.putInt("MPREVIOUS", mPrevious);
+            bundle.putBoolean("MWRAP", mWrap);
+            bundle.putLong("MSPEED", mSpeed);
+            bundle.putInt("MDECIMAL", mDecimal);
+            bundle.putInt("MSTEP", mStep);
+            bundle.putParcelable("SUPER", p);
+
+            // Other members of this class don't need to be saved.
+            return bundle;
+    }
+
+    
+    /**
+     * Overridden to restore instance state when device orientation changes. 
+     * 
+     * This method is called automatically if you assign an id to the widget
+     * widget using the {@link #setId(int)} method. 
+     */
+    @Override
+    protected void onRestoreInstanceState(Parcelable parcel) {
+    	Bundle bundle = (Bundle) parcel;
+
+    	mStart    = bundle.getInt("MSTART");
+    	mEnd      = bundle.getInt("MEND");
+    	mPrevious = bundle.getInt("MPREVIOUS");
+    	mWrap     = bundle.getBoolean("MWRAP");
+    	mSpeed    = bundle.getLong("MSPEED");
+    	mStep     = bundle.getInt("MSTEP");
+    	
+    	// setCurrent() will call updateView(), which will properly 
+    	// set the editText field.
+    	setCurrent(bundle.getInt("MCURRENT"));
+    	setDecimal( bundle.getInt("MDECIMAL") );
+    	
+        Log.d(TAG, "Restored for id: " + getId() + "; mCurrent: " + mCurrent );
+    	super.onRestoreInstanceState(bundle.getParcelable("SUPER"));
+    }
+    
 }

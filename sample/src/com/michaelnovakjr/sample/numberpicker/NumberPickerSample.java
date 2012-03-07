@@ -41,9 +41,8 @@ public class NumberPickerSample extends Activity implements NumberPickerDialog.O
     public void onClick(View v ) {
 		switch( v.getId() ) {
 		case R.id.decimal_button:
-			//WRI TODO
-			//Intent i = new Intent( this, DecimalPoint.class);
-			//startActivity(i);
+			Intent i = new Intent( this, DecimalPoint.class);
+			startActivity(i);
 			break;
 		}
     }

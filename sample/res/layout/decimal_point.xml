@@ -17,7 +17,7 @@
  */
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:np="http://schemas.android.com/apk/res/com.quietlycoding.android.picker"
+	xmlns:np="http://schemas.android.com/apk/res/com.michaelnovakjr.sample.numberpicker"
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
@@ -27,7 +27,7 @@
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="Default NumberPicker" />
 
-	<com.quietlycoding.android.numberpicker.NumberPicker
+	<com.michaelnovakjr.numberpicker.NumberPicker
 	    android:id = "@+id/number_picker"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
@@ -71,7 +71,7 @@
 			    android:layout_weight="1"
 			/>
 			
-    	    <com.quietlycoding.android.numberpicker.NumberPicker
+    	    <com.michaelnovakjr.numberpicker.NumberPicker
 	    		android:id = "@+id/decimal_pos_picker"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -96,13 +96,13 @@
 				android:text="Increments" 
 			/>
 			
-    	    <com.quietlycoding.android.numberpicker.NumberPicker
+    	    <com.michaelnovakjr.numberpicker.NumberPicker
 				android:id = "@+id/step_picker"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				np:startRange="1" 
 				np:endRange="20" 
-				np:defaultValue="1" 
+				np:defaultValue="2" 
 				np:wrap="false" 
 			/>
 		</LinearLayout>
